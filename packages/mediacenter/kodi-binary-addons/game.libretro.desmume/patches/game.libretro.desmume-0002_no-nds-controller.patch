@@ -1,0 +1,11 @@
+diff -Naur a/game.libretro.desmume/addon.xml b/game.libretro.desmume/addon.xml
+--- a/game.libretro.desmume/addon.xml	2016-01-07 20:58:23.000000000 +0100
++++ b/game.libretro.desmume/addon.xml	2016-01-21 09:46:08.754421218 +0100
+@@ -5,7 +5,6 @@
+ 		provider-name="Libretro">
+ 	<requires>
+ 		<import addon="game.libretro" version="1.0.0"/>
+-		<import addon="game.controller.nds" version="1.0.0"/>
+ 	</requires>
+ 	<extension point="kodi.gameclient"
+                    library_android="libgame.libretro.desmume.so"

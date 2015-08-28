@@ -1,0 +1,25 @@
+diff -Naur a/Makefile b/Makefile
+--- a/Makefile	2016-01-25 09:54:01.000000000 +0100
++++ b/Makefile	2016-01-25 20:29:18.436641489 +0100
+@@ -1,8 +1,8 @@
+ # compiler, linker and utilities
+-AR = @ar
+-CC = @gcc
+-LD = @gcc
+-RM = @rm -f
++AR ?= @ar
++CC ?= @gcc
++LD ?= @gcc
++RM ?= @rm -f
+ 
+ CORE_DIR := src
+ TARGET_NAME := mame2003
+@@ -222,7 +222,7 @@
+ ifdef SYMBOLS
+ CFLAGS += -O0 -Wall -Wno-unused -g
+ else
+-CFLAGS += -DNDEBUG $(ARCH) -O3 -fomit-frame-pointer -fstrict-aliasing
++CFLAGS += -DNDEBUG -O3 -fomit-frame-pointer -fstrict-aliasing
+ endif
+ 
+ # extra options needed *only* for the osd files
