@@ -1,0 +1,12 @@
+diff -Naur a/libretro/Makefile b/libretro/Makefile
+--- a/libretro/Makefile	2016-02-15 11:42:02.068238959 +0100
++++ b/libretro/Makefile	2016-02-15 11:18:53.124009922 +0100
+@@ -267,7 +267,7 @@
+ CXXFLAGS	+= -std=c++11 $(CPUOPTS) $(COREFLAGS) $(INCFLAGS) $(PLATCFLAGS) $(fpic) $(PLATCFLAGS) $(CPUFLAGS) $(GLFLAGS) $(DYNAFLAGS) 
+ CFLAGS		+= $(CPUOPTS) $(COREFLAGS) $(INCFLAGS) $(PLATCFLAGS) $(fpic) $(PLATCFLAGS) $(CPUFLAGS) $(GLFLAGS) $(DYNAFLAGS)
+ 
+-LDFLAGS		+= -lm -ldl -lrt $(fpic)
++LDFLAGS		+= -lm -ldl -lrt -lenet $(fpic)
+ ifeq (,$(findstring android,$(platform)))
+ 	LDFLAGS		+= -lpthread
+ endif

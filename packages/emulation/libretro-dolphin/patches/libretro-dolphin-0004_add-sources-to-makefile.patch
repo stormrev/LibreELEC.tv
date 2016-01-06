@@ -1,0 +1,39 @@
+diff -Naur a/libretro/Makefile.common b/libretro/Makefile.common
+--- a/libretro/Makefile.common	2016-02-15 09:29:06.185998807 +0100
++++ b/libretro/Makefile.common	2016-02-15 09:41:20.513983822 +0100
+@@ -169,6 +169,7 @@
+ SOURCES_CXX += $(CORECOMMONDIR)/BreakPoints.cpp \
+ 					$(CORECOMMONDIR)/CDUtils.cpp \
+ 					$(CORECOMMONDIR)/ColorUtil.cpp \
++                                        $(CORECOMMONDIR)/ENetUtil.cpp \
+ 					$(CORECOMMONDIR)/FileSearch.cpp \
+ 					$(CORECOMMONDIR)/FileUtil.cpp \
+ 					$(CORECOMMONDIR)/GekkoDisassembler.cpp \
+@@ -192,6 +193,7 @@
+ 					$(CORECOMMONDIR)/SysConf.cpp \
+ 					$(CORECOMMONDIR)/Thread.cpp \
+ 					$(CORECOMMONDIR)/Timer.cpp \
++                                        $(CORECOMMONDIR)/TraversalClient.cpp \
+ 					$(CORECOMMONDIR)/VersionLibretro.cpp \
+ 					$(CORECOMMONDIR)/Crypto/bn.cpp \
+ 					$(CORECOMMONDIR)/Crypto/ec.cpp \
+@@ -286,7 +288,8 @@
+ 					$(COREDIR)/VideoBackends/OGL/GLInterface/LibretroGL.cpp
+ 
+ # Target video common
+-SOURCES_CXX += $(COREDIR)/VideoCommon/BoundingBox.cpp \
++SOURCES_CXX += $(COREDIR)/VideoCommon/AsyncRequests.cpp \
++					$(COREDIR)/VideoCommon/BoundingBox.cpp \
+ 					$(COREDIR)/VideoCommon/BPFunctions.cpp \
+ 					$(COREDIR)/VideoCommon/BPMemory.cpp \
+ 					$(COREDIR)/VideoCommon/BPStructs.cpp \
+@@ -499,7 +502,8 @@
+ 
+ SOURCES_CXX += $(COREDIR)/Core/HW/WiimoteReal/WiimoteReal.cpp 
+ 
+-SOURCES_CXX += $(COREDIR)/Core/PowerPC/PowerPC.cpp \
++SOURCES_CXX += $(COREDIR)/Core/PowerPC/MMU.cpp \
++					$(COREDIR)/Core/PowerPC/PowerPC.cpp \
+ 					$(COREDIR)/Core/PowerPC/PPCAnalyst.cpp \
+ 					$(COREDIR)/Core/PowerPC/PPCCache.cpp \
+ 					$(COREDIR)/Core/PowerPC/PPCSymbolDB.cpp \
