@@ -9,14 +9,15 @@ diff -Naur kodi-16.0-beta5-19fc4fa/system/keymaps/keyboard.xml kodi-16.0-beta5-1
        <h>ActivateWindow(TVChannels)</h>
        <j>ActivateWindow(RadioChannels)</j>
        <k>ActivateWindow(TVRecordings)</k>
-@@ -268,6 +269,7 @@
+@@ -220,7 +221,8 @@
    <TVGuide>
      <keyboard>
        <e>PreviousMenu</e>
+       <t>ShowTimerRule</t>
 +      <epg>PreviousMenu</epg>
      </keyboard>
    </TVGuide>
-   <MyFiles>
+   <MyRadioChannels>
 diff -Naur kodi-16.0-beta5-19fc4fa/xbmc/input/linux/LinuxInputDevices.cpp kodi-16.0-beta5-19fc4fa.patch/xbmc/input/linux/LinuxInputDevices.cpp
 --- kodi-16.0-beta5-19fc4fa/xbmc/input/linux/LinuxInputDevices.cpp	2015-12-15 00:07:12.000000000 +0100
 +++ kodi-16.0-beta5-19fc4fa.patch/xbmc/input/linux/LinuxInputDevices.cpp	2016-01-05 06:41:13.847846527 +0100

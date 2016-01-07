@@ -17,13 +17,13 @@
 ################################################################################
 
 PKG_NAME="kodi"
-PKG_VERSION="16.1-rc2-a7caa16"
+PKG_VERSION="17.0-alpha1-8191052"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
 PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain kodi:host libsquish boost Python zlib bzip2 systemd pciutils lzo pcre swig:host libass curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng tiff freetype jasper libogg libcdio libmpeg2 taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg crossguid giflib"
+PKG_DEPENDS_TARGET="toolchain kodi:host libsquish Python zlib bzip2 systemd pciutils lzo pcre swig:host libass curl rtmpdump fontconfig fribidi tinyxml libjpeg-turbo libpng freetype libogg libcdio taglib libxml2 libxslt yajl sqlite libvorbis ffmpeg crossguid giflib"
 PKG_DEPENDS_HOST="lzo:host libpng:host libjpeg-turbo:host giflib:host"
 PKG_PRIORITY="optional"
 PKG_SECTION="mediacenter"
@@ -49,7 +49,7 @@ fi
 
 if [ ! "$OPENGL" = "no" ]; then
 # for OpenGL (GLX) support
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $OPENGL glu glew"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET $OPENGL glu"
   KODI_OPENGL="--enable-gl"
 else
   KODI_OPENGL="--disable-gl"
@@ -228,14 +228,14 @@ export CXXFLAGS_FOR_BUILD="$HOST_CXXFLAGS"
 export CFLAGS_FOR_BUILD="$HOST_CFLAGS"
 export LDFLAGS_FOR_BUILD="$HOST_LDFLAGS"
 
-export PYTHON_VERSION="2.7"
+export PYTHON_VERSION=2.7
 export PYTHON_CPPFLAGS="-I$SYSROOT_PREFIX/usr/include/python$PYTHON_VERSION"
 export PYTHON_LDFLAGS="-L$SYSROOT_PREFIX/usr/lib/python$PYTHON_VERSION -lpython$PYTHON_VERSION"
 export PYTHON_SITE_PKG="$SYSROOT_PREFIX/usr/lib/python$PYTHON_VERSION/site-packages"
-export ac_python_version="$PYTHON_VERSION"
 
 PKG_CONFIGURE_OPTS_TARGET="gl_cv_func_gettimeofday_clobber=no \
-                           ac_cv_lib_bluetooth_hci_devid=no \
+                           ac_python_version=$PYTHON_VERSION \
+                           --disable-libbluetooth \
                            --disable-debug \
                            --disable-optimizations \
                            $KODI_OPENGL \
@@ -279,8 +279,11 @@ PKG_CONFIGURE_OPTS_TARGET="gl_cv_func_gettimeofday_clobber=no \
 
 pre_configure_host() {
 # kodi fails to build in subdirs
-  cd $ROOT/$PKG_BUILD
-    rm -rf .$HOST_NAME
+  rm -rf $PKG_BUILD/.$TARGET_NAME
+}
+
+configure_host() {
+  : # not needed
 }
 
 make_host() {
@@ -298,15 +301,11 @@ pre_build_target() {
 # adding fake Makefile for stripped skin
   mkdir -p $PKG_BUILD/addons/skin.confluence/media
   touch $PKG_BUILD/addons/skin.confluence/media/Makefile.in
-
-# autoreconf
-  BOOTSTRAP_STANDALONE=1 make -C $PKG_BUILD -f bootstrap.mk
 }
 
 pre_configure_target() {
 # kodi fails to build in subdirs
-  cd $ROOT/$PKG_BUILD
-    rm -rf .$TARGET_NAME
+  rm -rf $PKG_BUILD/.$TARGET_NAME
 
 # kodi should never be built with lto
   strip_lto
@@ -316,6 +315,9 @@ pre_configure_target() {
   export LIBS="$LIBS -lz"
 
   export JSON_BUILDER=$ROOT/$TOOLCHAIN/bin/JsonSchemaBuilder
+
+# autoreconf
+  BOOTSTRAP_STANDALONE=1 make -f $ROOT/$PKG_BUILD/bootstrap.mk
 }
 
 make_target() {
@@ -340,9 +342,12 @@ post_makeinstall_target() {
   rm -rf $INSTALL/usr/bin/xbmc
   rm -rf $INSTALL/usr/bin/xbmc-standalone
   rm -rf $INSTALL/usr/lib/kodi/*.cmake
-
-  # more binaddons cross compile badness meh
-  sed -i -e "s:INCLUDE_DIR /usr/include/kodi:INCLUDE_DIR $SYSROOT_PREFIX/usr/include/kodi:g" $SYSROOT_PREFIX/usr/lib/kodi/kodi-config.cmake
+  rm -rf $INSTALL/usr/share/applications
+  rm -rf $INSTALL/usr/share/icons
+  rm -rf $INSTALL/usr/share/kodi/addons/skin.estouchy
+  rm -rf $INSTALL/usr/share/kodi/addons/service.xbmc.versioncheck
+  rm -rf $INSTALL/usr/share/kodi/addons/visualization.vortex
+  rm -rf $INSTALL/usr/share/xsessions
 
   mkdir -p $INSTALL/usr/lib/kodi
     cp $PKG_DIR/scripts/kodi-config $INSTALL/usr/lib/kodi
@@ -361,12 +366,6 @@ post_makeinstall_target() {
     rm -rf $INSTALL/usr/lib/kodi/kodi-xrandr
   fi
 
-  rm -rf $INSTALL/usr/share/applications
-  rm -rf $INSTALL/usr/share/icons
-  rm -rf $INSTALL/usr/share/kodi/addons/service.xbmc.versioncheck
-  rm -rf $INSTALL/usr/share/kodi/addons/visualization.vortex
-  rm -rf $INSTALL/usr/share/xsessions
-
   mkdir -p $INSTALL/usr/share/kodi/addons
     cp -R $PKG_DIR/config/os.openelec.tv $INSTALL/usr/share/kodi/addons
     $SED "s|@OS_VERSION@|$OS_VERSION|g" -i $INSTALL/usr/share/kodi/addons/os.openelec.tv/addon.xml
@@ -375,8 +374,8 @@ post_makeinstall_target() {
     cp -R $PKG_DIR/config/repository.libreelec.tv $INSTALL/usr/share/kodi/addons
     $SED "s|@ADDON_URL@|$ADDON_URL|g" -i $INSTALL/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
 
-  mkdir -p $INSTALL/usr/lib/python"$PYTHON_VERSION"/site-packages/kodi
-    cp -R tools/EventClients/lib/python/* $INSTALL/usr/lib/python"$PYTHON_VERSION"/site-packages/kodi
+  mkdir -p $INSTALL/usr/lib/python$PYTHON_VERSION/site-packages/kodi
+    cp -R tools/EventClients/lib/python/* $INSTALL/usr/lib/python$PYTHON_VERSION/site-packages/kodi
 
   mkdir -p $INSTALL/usr/share/kodi/config
     cp $PKG_DIR/config/guisettings.xml $INSTALL/usr/share/kodi/config
@@ -404,6 +403,24 @@ post_makeinstall_target() {
     else
       cp $PKG_DIR/config/appliance.xml $INSTALL/usr/share/kodi/system/settings
     fi
+
+  # update addon manifest
+  xmlstarlet ed -L -d "/addons/addon[text()='service.xbmc.versioncheck']" \
+    $INSTALL/usr/share/kodi/system/addon-manifest.xml
+  xmlstarlet ed -L -d "/addons/addon[text()='skin.estouchy']" \
+    $INSTALL/usr/share/kodi/system/addon-manifest.xml
+  xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "peripheral.joystick" \
+    $INSTALL/usr/share/kodi/system/addon-manifest.xml
+  xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "os.libreelec.tv" \
+    $INSTALL/usr/share/kodi/system/addon-manifest.xml
+  xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "repository.libreelec.tv" \
+    $INSTALL/usr/share/kodi/system/addon-manifest.xml
+  xmlstarlet ed -L --subnode "/addons" -t elem -n "addon" -v "service.libreelec.settings" \
+    $INSTALL/usr/share/kodi/system/addon-manifest.xml
+
+  # more binaddons cross compile badness meh
+    sed -i -e "s:INCLUDE_DIR /usr/include/kodi:INCLUDE_DIR $SYSROOT_PREFIX/usr/include/kodi:g" $SYSROOT_PREFIX/usr/lib/kodi/kodi-config.cmake
+
 
   if [ "$KODI_EXTRA_FONTS" = yes ]; then
     mkdir -p $INSTALL/usr/share/kodi/media/Fonts
