@@ -71,6 +71,14 @@ pack_addon() {
     ADDONVER=$(xmlstarlet sel -t -v "/addon/@version" $ADDON_BUILD/$PKG_ADDON_ID/addon.xml)
   fi
 
+  if [ -n "$(echo $PKG_ADDON_ID | grep game.libretro.)" ]; then
+    ADDONVEROLD=$ADDONVER
+    ADDONVER=$ADDONVER.$PKG_REV
+    sed -e "0,/version=\"$ADDONVEROLD\"/s/version=\"$ADDONVEROLD\"/version=\"$ADDONVER\"/" \
+        -i $ADDON_BUILD/$PKG_ADDON_ID/addon.xml
+
+  fi
+
   if [ -f $PKG_DIR/source/default.py ]; then
     cp -R $PKG_DIR/source/* $ADDON_BUILD/$PKG_ADDON_ID
   fi
