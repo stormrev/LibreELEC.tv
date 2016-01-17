@@ -388,6 +388,8 @@ post_makeinstall_target() {
     $SED "s|@OS_VERSION@|$OS_VERSION|g" -i $INSTALL/usr/share/kodi/addons/os.libreelec.tv/addon.xml
     cp -R $PKG_DIR/config/repository.libreelec.tv $INSTALL/usr/share/kodi/addons
     $SED "s|@ADDON_URL@|$ADDON_URL|g" -i $INSTALL/usr/share/kodi/addons/repository.libreelec.tv/addon.xml
+    cp -R $PKG_DIR/config/repository.retroplayer.libreelec.addons $INSTALL/usr/share/kodi/addons
+    $SED "s|@ADDON_URL@|https://retroplayer.freestylephenoms.com/$ADDON_PATH|g" $INSTALL/usr/share/kodi/addons/repository.retroplayer.libreelec.addons/addon.xml
 
   mkdir -p $INSTALL/usr/lib/python$PYTHON_VERSION/site-packages/kodi
     cp -R tools/EventClients/lib/python/* $INSTALL/usr/lib/python$PYTHON_VERSION/site-packages/kodi
