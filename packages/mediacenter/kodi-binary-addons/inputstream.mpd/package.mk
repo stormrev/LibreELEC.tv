@@ -17,10 +17,10 @@
 ################################################################################
 
 PKG_NAME="inputstream.mpd"
-PKG_VERSION="2ebae49"
+PKG_VERSION="a7c1545"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
-PKG_URL="https://github.com/mapfau/inputstream.mpd/archive/$PKG_VERSION.tar.gz"
+PKG_URL="https://github.com/liberty-developer/inputstream.mpd/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain kodi-platform"
 PKG_SECTION=""
 PKG_SHORTDESC=""
@@ -45,10 +45,8 @@ post_makeinstall_target() {
   make
 
   mkdir -p $INSTALL/usr/lib/kodi/addons/$PKG_NAME/decrypter
-  cp -P $ROOT/$PKG_BUILD/.$TARGET_NAME/wv/libssd_wv.so $INSTALL/usr/lib/kodi/addons/$PKG_NAME/decrypter
-  if [ -d $ROOT/$PKG_BUILD/$TARGET_ARCH ]; then
-    cp -P $ROOT/$PKG_BUILD/$TARGET_ARCH/* $INSTALL/usr/lib/kodi/addons/$PKG_NAME/decrypter
-  fi
+    cp -P $ROOT/$PKG_BUILD/.$TARGET_NAME/wv/libssd_wv.so $INSTALL/usr/lib/kodi/addons/$PKG_NAME/decrypter
+    ln -sf /storage/decrypters/libwidevinecdm.so $INSTALL/usr/lib/kodi/addons/$PKG_NAME/decrypter/libwidevinecdm.so
 
   # this is a workaround
   cp -PR $INSTALL/usr/lib/kodi/addons/$PKG_NAME/* $INSTALL/usr/share/kodi/addons/$PKG_NAME/
@@ -56,11 +54,11 @@ post_makeinstall_target() {
 
 addon() {
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/
-  cp -PR $PKG_BUILD/.install_pkg/usr/share/kodi/addons/$PKG_NAME/* $ADDON_BUILD/$PKG_ADDON_ID/
-  cp -PL $PKG_BUILD/.install_pkg/usr/lib/kodi/addons/$PKG_NAME/*.so $ADDON_BUILD/$PKG_ADDON_ID/
+    cp -PR $PKG_BUILD/.install_pkg/usr/share/kodi/addons/$PKG_NAME/* $ADDON_BUILD/$PKG_ADDON_ID/
+    cp -PL $PKG_BUILD/.install_pkg/usr/lib/kodi/addons/$PKG_NAME/*.so $ADDON_BUILD/$PKG_ADDON_ID/
+
   mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/decrypter/
-  cp -P $PKG_BUILD/.$TARGET_NAME/wv/libssd_wv.so $ADDON_BUILD/$PKG_ADDON_ID/decrypter/
-  if [ -d $ROOT/$PKG_BUILD/$TARGET_ARCH ]; then
-    cp -P $ROOT/$PKG_BUILD/$TARGET_ARCH/* $ADDON_BUILD/$PKG_ADDON_ID/decrypter
-  fi
+    cp -P $PKG_BUILD/.$TARGET_NAME/wv/libssd_wv.so $ADDON_BUILD/$PKG_ADDON_ID/decrypter/
+
+  ln -sf /storage/decrypters/libwidevinecdm.so $ADDON_BUILD/$PKG_ADDON_ID/decrypter/libwidevinecdm.so
 }
