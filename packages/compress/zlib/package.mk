@@ -33,8 +33,14 @@ PKG_LONGDESC="zlib is a general purpose data compression library. All the code i
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
+INIT_CONFIGURE_OPTS="--prefix=/"
 TARGET_CONFIGURE_OPTS="--prefix=/usr"
 HOST_CONFIGURE_OPTS="--prefix=$ROOT/$TOOLCHAIN"
+
+pre_build_init() {
+  mkdir -p $PKG_BUILD/.$TARGET_NAME-init
+  cp -RP $PKG_BUILD/* $PKG_BUILD/.$TARGET_NAME-init
+}
 
 pre_build_target() {
   mkdir -p $PKG_BUILD/.$TARGET_NAME
