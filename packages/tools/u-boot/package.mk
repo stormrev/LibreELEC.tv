@@ -17,25 +17,27 @@
 ################################################################################
 
 PKG_NAME="u-boot"
+PKG_DEPENDS_TARGET="toolchain"
 if [ "$UBOOT_VERSION" = "default" ]; then
   PKG_VERSION="2011.03-rc1"
   PKG_SITE="http://www.denx.de/wiki/U-Boot/WebHome"
   PKG_URL="ftp://ftp.denx.de/pub/u-boot/$PKG_NAME-$PKG_VERSION.tar.bz2"
 elif [ "$UBOOT_VERSION" = "imx6-cuboxi" ]; then
-  PKG_VERSION="imx6-e817fa3"
+  PKG_VERSION="imx6-408544d"
   PKG_SITE="http://imx.solid-run.com/wiki/index.php?title=Building_the_kernel_and_u-boot_for_the_CuBox-i_and_the_HummingBoard"
+  # https://github.com/SolidRun/u-boot-imx6.git
   PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
 elif [ "$UBOOT_VERSION" = "hardkernel" ]; then
-  PKG_VERSION="hardkernel-5785ef8"
+  PKG_VERSION="hardkernel-502b13b"
   PKG_SITE="https://github.com/hardkernel/u-boot"
   PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-none-elf:host"
 else
   exit 0
 fi
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
-PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="tools"
 PKG_SHORTDESC="u-boot: Universal Bootloader project"
@@ -68,9 +70,16 @@ make_target() {
   done
 
   for UBOOT_TARGET in $UBOOT_CONFIG; do
-    make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm mrproper
-    make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm $UBOOT_TARGET
-    make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm HOSTCC="$HOST_CC" HOSTSTRIP="true"
+    if [ "$PROJECT" != "Odroid_C2" ]; then
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm mrproper
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm $UBOOT_TARGET
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm HOSTCC="$HOST_CC" HOSTSTRIP="true"
+    else
+      export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-none-elf/bin/:$PATH
+      make CROSS_COMPILE=aarch64-none-elf- ARCH=arm mrproper
+      make CROSS_COMPILE=aarch64-none-elf- ARCH=arm $UBOOT_TARGET
+      make CROSS_COMPILE=aarch64-none-elf- ARCH=arm HOSTCC="$HOST_CC" HOSTSTRIP="true"
+    fi
 
     # rename files in case of multiple targets
     if [ $UBOOT_TARGET_CNT -gt 1 ]; then

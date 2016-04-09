@@ -19,7 +19,7 @@
 
 echo "getting sources..."
   if [ ! -d u-boot-hardkernel.git ]; then
-    git clone --depth=1 --single-branch -b odroidc2-v2015.01 https://github.com/hardkernel/u-boot.git u-boot-hardkernel.git
+    git clone --depth=1 -b odroidc2-v2015.01 https://github.com/hardkernel/u-boot.git u-boot-hardkernel.git
   fi
 
   cd u-boot-hardkernel.git
