@@ -44,6 +44,6 @@ if [ "$AMREMOTE_SUPPORT" = "yes" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET amremote"
 fi
 
-if [ "$PROJECT" = "Odroid-C2" ]; then
+if [ "$PROJECT" = "Odroid_C2" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET odroid-remote"
 fi
