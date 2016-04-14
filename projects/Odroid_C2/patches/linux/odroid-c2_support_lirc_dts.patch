@@ -1,0 +1,19 @@
+--- linux-hardkernel-3.14-2bc49d8/arch/arm64/boot/dts/meson64_odroidc2.dts	2016-02-09 12:01:47.000000000 +0100
++++ linux-hardkernel-3.14-2bc49d8.new/arch/arm64/boot/dts/meson64_odroidc2.dts	2016-04-13 20:57:48.626374574 +0200
+@@ -131,6 +131,16 @@
+ 		display_size_default = <1280 720 1280 1440 32>;
+ 	};
+ 
++	meson-ir {
++                compatible = "amlogic, meson6-ir";
++                reg = <0x0 0xc8100580 0x0 0x20>;
++                interrupts = <0 196 1>;
++                pinctrl-names = "default";
++                pinctrl-0 = <&remote_pins>;
++                pulse-inverted;
++                status = "ok";
++	};
++
+ 	ge2d {
+ 		compatible = "amlogic, ge2d";
+ 		dev_name = "ge2d";
